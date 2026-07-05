@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IED Reader — Gerador de Códigos de Acesso</title>
+<style>
+  :root {
+    --gold: #B08D57;
+    --charcoal: #2B2B2B;
+    --bg: #FAF8F5;
+    --card: #FFFFFF;
+    --border: #E4E0D8;
+    --green: #2E7D32;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--charcoal);
+    display: flex;
+    justify-content: center;
+    padding: 24px 16px 60px;
+  }
+  .wrap { max-width: 560px; width: 100%; }
+  .header { text-align: center; margin-bottom: 28px; }
+  .header .lock {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: rgba(176,141,87,0.12);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 14px; font-size: 28px;
+  }
+  h1 { font-size: 20px; margin: 0 0 6px; font-weight: 700; }
+  .subtitle { font-size: 13.5px; color: #6b6b6b; line-height: 1.5; max-width: 440px; margin: 0 auto; }
+
+  .card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 1px;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .hint { font-size: 12.5px; color: #888; margin-top: 6px; line-height: 1.5; }
+  input[type=text] {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 15px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    background: #f9f8f6;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  input[type=text]:focus { outline: none; border-color: var(--gold); }
+
+  button {
+    width: 100%;
+    padding: 15px;
+    margin-top: 16px;
+    border: none;
+    border-radius: 10px;
+    background: var(--charcoal);
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  button:hover { opacity: 0.92; }
+  button:active { transform: scale(0.99); }
+
+  .result {
+    display: none;
+    margin-top: 20px;
+    padding: 18px;
+    border-radius: 12px;
+    background: rgba(46,125,50,0.07);
+    border: 1.4px solid var(--green);
+    text-align: center;
+  }
+  .result.show { display: block; }
+  .result .code {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: var(--green);
+    margin: 8px 0 14px;
+    word-break: break-all;
+  }
+  .copy-btn {
+    background: var(--green);
+    margin-top: 0;
+    padding: 12px;
+    font-size: 14px;
+  }
+  .copied-msg {
+    font-size: 12.5px;
+    color: var(--green);
+    margin-top: 8px;
+    font-weight: 600;
+    display: none;
+  }
+
+  .batch-list {
+    display: none;
+    margin-top: 16px;
+    max-height: 320px;
+    overflow-y: auto;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  .batch-list.show { display: block; }
+  .batch-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13.5px;
+  }
+  .batch-row:last-child { border-bottom: none; }
+  .batch-row .id { color: #888; font-size: 12px; }
+  .batch-row .code { font-weight: 700; letter-spacing: 0.5px; }
+
+  .section-title {
+    font-size: 11px;
+    letter-spacing: 1.2px;
+    font-weight: 700;
+    color: #999;
+    text-transform: uppercase;
+    margin: 30px 0 12px;
+    text-align: center;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .tab {
+    flex: 1;
+    padding: 12px;
+    text-align: center;
+    border-radius: 10px;
+    background: var(--card);
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1.5px solid var(--border);
+    color: #888;
+  }
+  .tab.active {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(176,141,87,0.06);
+  }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .footer-note {
+    text-align: center;
+    font-size: 11.5px;
+    color: #aaa;
+    margin-top: 30px;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <div class="lock">🔑</div>
+    <h1>Gerador de Códigos de Acesso</h1>
+    <div class="subtitle">IED Reader · Manual de Introdução ao Estudo do Direito</div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="single">Um código</div>
+    <div class="tab" data-tab="batch">Vários códigos</div>
+    <div class="tab" data-tab="verify">Verificar código</div>
+  </div>
+
+  <!-- SINGLE CODE -->
+  <div class="panel active" id="panel-single">
+    <div class="card">
+      <label>Identificador do comprador</label>
+      <input type="text" id="single-input" placeholder="Ex.: 929123456 (telefone do comprador)" autocomplete="off">
+      <div class="hint">Sugestão: use o número de telefone do comprador, o nome, ou um número de pedido. Isto ajuda-o a saber depois a quem pertence cada código.</div>
+      <button onclick="generateSingle()">Gerar Código</button>
+
+      <div class="result" id="single-result">
+        <div style="font-size:13px;color:#666;">Código de acesso gerado:</div>
+        <div class="code" id="single-code"></div>
+        <button class="copy-btn" onclick="copySingle()">📋 Copiar Código</button>
+        <div class="copied-msg" id="single-copied">✓ Copiado! Agora é só colar na conversa com o comprador.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BATCH -->
+  <div class="panel" id="panel-batch">
+    <div class="card">
+      <label>Quantidade de códigos</label>
+      <input type="text" id="batch-input" placeholder="Ex.: 10" autocomplete="off" inputmode="numeric">
+      <div class="hint">Gera uma lista de códigos numerados sequencialmente (000001, 000002...). Útil para pré-vendas ou lotes de códigos prontos a distribuir.</div>
+      <button onclick="generateBatch()">Gerar Lista de Códigos</button>
+
+      <div class="batch-list" id="batch-list"></div>
+    </div>
+  </div>
+
+  <!-- VERIFY -->
+  <div class="panel" id="panel-verify">
+    <div class="card">
+      <label>Código a verificar</label>
+      <input type="text" id="verify-input" placeholder="Ex.: IED-929123456-A1B2C3" autocomplete="off">
+      <div class="hint">Útil para confirmar se um código que já enviou está correcto, em caso de dúvida do comprador.</div>
+      <button onclick="verifyCode()">Verificar</button>
+
+      <div class="result" id="verify-result">
+        <div class="code" id="verify-code-display"></div>
+        <div id="verify-status" style="font-size:15px;font-weight:700;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    Esta página funciona totalmente offline, no seu navegador — não precisa de internet<br>
+    depois de a abrir. Não partilhe este ficheiro publicamente.
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   SHA-256 / HMAC-SHA256 puro em JavaScript (sem dependências),
+   para funcionar 100% offline no navegador.
+   Implementação idêntica ao algoritmo usado no app (Dart) e no
+   script Python — mesma "chave secreta", mesmo resultado.
+   ============================================================ */
+async function hmacSha256Hex(secret, message) {
+  const enc = new TextEncoder();
+  const keyData = enc.encode(secret);
+  const msgData = enc.encode(message);
+  const cryptoKey = await crypto.subtle.importKey(
+    'raw', keyData, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+  );
+  const signature = await crypto.subtle.sign('HMAC', cryptoKey, msgData);
+  return Array.from(new Uint8Array(signature))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+// DEVE ser idêntico ao usado em:
+// lib/services/access_code_service.dart  (Dart)
+// scripts/generate_access_code.py        (Python)
+const SECRET = 'IEDReader-NevesMoxi-2025-AccessCode-Secret';
+
+function normalize(id) {
+  return id.trim().toUpperCase().replace(/\s+/g, '');
+}
+
+async function computeChecksum(identifier) {
+  const hex = await hmacSha256Hex(SECRET, identifier);
+  return hex.substring(0, 6).toUpperCase();
+}
+
+async function generateCode(identifier) {
+  const id = normalize(identifier);
+  const checksum = await computeChecksum(id);
+  return `IED-${id}-${checksum}`;
+}
+
+async function verifyCodeString(rawCode) {
+  const code = normalize(rawCode);
+  const parts = code.split('-');
+  if (parts.length < 3 || parts[0] !== 'IED') return false;
+  const checksum = parts[parts.length - 1];
+  const identifier = parts.slice(1, -1).join('-');
+  if (!identifier || checksum.length !== 6) return false;
+  const expected = await computeChecksum(identifier);
+  return expected === checksum;
+}
+
+/* ---------------- Tabs ---------------- */
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+/* ---------------- Single ---------------- */
+let lastSingleCode = '';
+
+async function generateSingle() {
+  const input = document.getElementById('single-input').value;
+  if (!input.trim()) {
+    alert('Introduza um identificador (ex.: telefone do comprador).');
+    return;
+  }
+  const code = await generateCode(input);
+  lastSingleCode = code;
+  document.getElementById('single-code').textContent = code;
+  document.getElementById('single-result').classList.add('show');
+  document.getElementById('single-copied').style.display = 'none';
+}
+
+function copySingle() {
+  navigator.clipboard.writeText(lastSingleCode).then(() => {
+    document.getElementById('single-copied').style.display = 'block';
+  }).catch(() => {
+    // fallback for older browsers
+    const ta = document.createElement('textarea');
+    ta.value = lastSingleCode;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    document.getElementById('single-copied').style.display = 'block';
+  });
+}
+
+/* ---------------- Batch ---------------- */
+async function generateBatch() {
+  const raw = document.getElementById('batch-input').value.trim();
+  const count = parseInt(raw, 10);
+  if (!count || count < 1 || count > 500) {
+    alert('Introduza uma quantidade válida (1 a 500).');
+    return;
+  }
+  const listEl = document.getElementById('batch-list');
+  listEl.innerHTML = '';
+  listEl.classList.add('show');
+
+  for (let i = 1; i <= count; i++) {
+    const id = String(i).padStart(6, '0');
+    const code = await generateCode(id);
+    const row = document.createElement('div');
+    row.className = 'batch-row';
+    row.innerHTML = `<span class="id">#${id}</span><span class="code">${code}</span>`;
+    row.style.cursor = 'pointer';
+    row.title = 'Toque para copiar';
+    row.addEventListener('click', () => {
+      navigator.clipboard.writeText(code).catch(() => {});
+      row.style.background = 'rgba(46,125,50,0.08)';
+      setTimeout(() => { row.style.background = ''; }, 500);
+    });
+    listEl.appendChild(row);
+  }
+}
+
+/* ---------------- Verify ---------------- */
+async function verifyCode() {
+  const raw = document.getElementById('verify-input').value;
+  if (!raw.trim()) {
+    alert('Introduza um código para verificar.');
+    return;
+  }
+  const ok = await verifyCodeString(raw);
+  const resultEl = document.getElementById('verify-result');
+  const statusEl = document.getElementById('verify-status');
+  document.getElementById('verify-code-display').textContent = normalize(raw);
+  statusEl.textContent = ok ? '✅ Código Válido' : '❌ Código Inválido';
+  statusEl.style.color = ok ? '#2E7D32' : '#C62828';
+  resultEl.style.borderColor = ok ? '#2E7D32' : '#C62828';
+  resultEl.style.background = ok ? 'rgba(46,125,50,0.07)' : 'rgba(198,40,40,0.07)';
+  resultEl.classList.add('show');
+}
+</script>
+</body>
+</html>
