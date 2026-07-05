@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'providers/book_provider.dart';
 import 'providers/reading_settings_provider.dart';
 import 'providers/reading_progress_provider.dart';
+import 'providers/access_provider.dart';
 import 'theme/app_theme.dart';
 import 'screens/root_shell.dart';
 
@@ -20,6 +21,7 @@ class IedReaderApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => BookProvider()),
         ChangeNotifierProvider(create: (_) => ReadingSettingsProvider()),
         ChangeNotifierProvider(create: (_) => ReadingProgressProvider()),
+        ChangeNotifierProvider(create: (_) => AccessProvider()),
       ],
       child: Consumer<ReadingSettingsProvider>(
         builder: (context, settings, _) {

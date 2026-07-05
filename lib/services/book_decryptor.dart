@@ -20,12 +20,13 @@ import 'package:encrypt/encrypt.dart' as enc;
 class BookDecryptor {
   // Must match the passphrase used by the build-time encryption script
   // (scripts/encrypt_book.py). Do not change without re-encrypting the asset.
-  static const String _passphrase =
-      'IEDReader-NevesMoxi-2025-AngolaLaw-Secure';
+  static const String _passphrase = 'IEDReader-NevesMoxi-2025-AngolaLaw-Secure';
 
   static String decryptToJsonString(Uint8List fileBytes) {
     if (fileBytes.length < 16) {
-      throw const FormatException('Ficheiro de conteúdo inválido ou corrompido.');
+      throw const FormatException(
+        'Ficheiro de conteúdo inválido ou corrompido.',
+      );
     }
     final ivBytes = fileBytes.sublist(0, 16);
     final cipherBytes = fileBytes.sublist(16);

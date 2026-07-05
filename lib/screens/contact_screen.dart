@@ -22,7 +22,9 @@ class ContactScreen extends StatelessWidget {
 
   void _showError(BuildContext context, String label) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Não foi possível abrir $label neste dispositivo.')),
+      SnackBar(
+        content: Text('Não foi possível abrir $label neste dispositivo.'),
+      ),
     );
   }
 

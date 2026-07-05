@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/reading_settings_provider.dart';
 import '../providers/reading_progress_provider.dart';
 import '../providers/book_provider.dart';
+import '../providers/access_provider.dart';
 import '../theme/app_theme.dart';
 import 'about_author_screen.dart';
 import 'contact_screen.dart';
@@ -17,6 +18,7 @@ class ProfileScreen extends StatelessWidget {
     final settings = context.watch<ReadingSettingsProvider>();
     final progress = context.watch<ReadingProgressProvider>();
     final bookProvider = context.watch<BookProvider>();
+    final access = context.watch<AccessProvider>();
 
     return Scaffold(
       appBar: AppBar(title: const Text('Perfil')),
@@ -49,14 +51,30 @@ class ProfileScreen extends StatelessWidget {
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                           const SizedBox(height: 2),
-                          Text(
-                            'Acesso: Versão de leitura',
-                            style: TextStyle(
-                              fontSize: 12.5,
-                              color: Theme.of(
-                                context,
-                              ).textTheme.bodySmall?.color,
-                            ),
+                          Row(
+                            children: [
+                              Icon(
+                                access.isUnlocked
+                                    ? Icons.lock_open
+                                    : Icons.lock_outline,
+                                size: 13,
+                                color: access.isUnlocked
+                                    ? Colors.green
+                                    : AppColors.gold,
+                              ),
+                              const SizedBox(width: 5),
+                              Text(
+                                access.isUnlocked
+                                    ? 'Acesso desbloqueado'
+                                    : 'Acesso bloqueado',
+                                style: TextStyle(
+                                  fontSize: 12.5,
+                                  color: Theme.of(
+                                    context,
+                                  ).textTheme.bodySmall?.color,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -129,6 +147,34 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
             const SizedBox(height: 20),
+
+            if (!access.isUnlocked) ...[
+              _SectionLabel('Acesso'),
+              Card(
+                child: ListTile(
+                  leading: const Icon(
+                    Icons.lock_outline,
+                    color: AppColors.gold,
+                  ),
+                  title: const Text('Desbloquear Leitura'),
+                  subtitle: const Text(
+                    'Já comprou o livro? Introduza o seu código de acesso.',
+                    style: TextStyle(fontSize: 11.5),
+                  ),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 14),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const ReaderScreen(
+                        initialChapterIndex: 0,
+                        initialSectionIndex: 0,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
 
             _SectionLabel('Institucional'),
             Card(

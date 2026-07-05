@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/book_provider.dart';
 import '../providers/reading_progress_provider.dart';
+import '../providers/access_provider.dart';
 import '../theme/app_theme.dart';
 import 'reader_screen.dart';
 import 'about_author_screen.dart';
@@ -16,6 +17,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final bookProvider = context.watch<BookProvider>();
     final progress = context.watch<ReadingProgressProvider>();
+    final access = context.watch<AccessProvider>();
 
     if (bookProvider.status == BookLoadStatus.loading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
@@ -107,9 +109,19 @@ class HomeScreen extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   icon: Icon(
-                    hasProgress ? Icons.menu_book : Icons.play_arrow_rounded,
+                    !access.isUnlocked
+                        ? Icons.lock_outline
+                        : hasProgress
+                        ? Icons.menu_book
+                        : Icons.play_arrow_rounded,
                   ),
-                  label: Text(hasProgress ? 'Continuar Leitura' : 'Ler Agora'),
+                  label: Text(
+                    !access.isUnlocked
+                        ? 'Desbloquear Leitura'
+                        : hasProgress
+                        ? 'Continuar Leitura'
+                        : 'Ler Agora',
+                  ),
                   onPressed: () {
                     final chapterIdx = hasProgress
                         ? progress.lastPosition!.chapterIndex
