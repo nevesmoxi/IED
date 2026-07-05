@@ -95,7 +95,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
                 body:
                     'Para questões sobre esta Política de Privacidade, contacte o autor '
                     'através do ecrã "Contacto" do Aplicativo, por telefone/WhatsApp '
-                    '(+244 929 990 606) ou por email (nevesmoxi01@gmail.coom ou '
+                    '(+244 929 990 606) ou por email (nevesmoxi01@gmail.com ou '
                     'nevesmoxi@hotmail.com).',
                 textColor: textColor,
               ),

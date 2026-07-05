@@ -6,7 +6,7 @@ class ContactScreen extends StatelessWidget {
   const ContactScreen({super.key});
 
   static const String _phone = '+244929990606';
-  static const String _emailPrimary = 'nevesmoxi01@gmail.coom';
+  static const String _emailPrimary = 'nevesmoxi01@gmail.com';
   static const String _emailSecondary = 'nevesmoxi@hotmail.com';
 
   Future<void> _launch(BuildContext context, Uri uri, String label) async {
