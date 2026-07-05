@@ -65,8 +65,8 @@ class ProfileScreen extends StatelessWidget {
                               const SizedBox(width: 5),
                               Text(
                                 access.isUnlocked
-                                    ? 'Acesso desbloqueado'
-                                    : 'Acesso bloqueado',
+                                    ? 'Acesso completo desbloqueado'
+                                    : 'Amostra gratuita (${AccessProvider.freeChapterCount} capítulos)',
                                 style: TextStyle(
                                   fontSize: 12.5,
                                   color: Theme.of(
@@ -156,17 +156,19 @@ class ProfileScreen extends StatelessWidget {
                     Icons.lock_outline,
                     color: AppColors.gold,
                   ),
-                  title: const Text('Desbloquear Leitura'),
-                  subtitle: const Text(
-                    'Já comprou o livro? Introduza o seu código de acesso.',
-                    style: TextStyle(fontSize: 11.5),
+                  title: const Text('Desbloquear Livro Completo'),
+                  subtitle: Text(
+                    'Já leu a amostra gratuita? Introduza o seu código de '
+                    'acesso para continuar a leitura a partir do capítulo '
+                    '${AccessProvider.freeChapterCount + 1}.',
+                    style: const TextStyle(fontSize: 11.5),
                   ),
                   trailing: const Icon(Icons.arrow_forward_ios, size: 14),
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (_) => const ReaderScreen(
-                        initialChapterIndex: 0,
+                        initialChapterIndex: AccessProvider.freeChapterCount,
                         initialSectionIndex: 0,
                       ),
                     ),

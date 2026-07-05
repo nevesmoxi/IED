@@ -33,6 +33,11 @@ class HomeScreen extends StatelessWidget {
 
     final book = bookProvider.book!;
     final hasProgress = progress.lastPosition != null;
+    // Whether resuming would land on a chapter that's still locked (e.g.
+    // the reader finished the free sample without unlocking access yet).
+    final resumeIsLocked =
+        hasProgress &&
+        !access.canReadChapter(progress.lastPosition!.chapterIndex);
 
     return Scaffold(
       body: SafeArea(
@@ -109,14 +114,14 @@ class HomeScreen extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   icon: Icon(
-                    !access.isUnlocked
+                    resumeIsLocked
                         ? Icons.lock_outline
                         : hasProgress
                         ? Icons.menu_book
                         : Icons.play_arrow_rounded,
                   ),
                   label: Text(
-                    !access.isUnlocked
+                    resumeIsLocked
                         ? 'Desbloquear Leitura'
                         : hasProgress
                         ? 'Continuar Leitura'

@@ -108,14 +108,14 @@ class _ReaderScreenState extends State<ReaderScreen> {
     final progress = context.watch<ReadingProgressProvider>();
     final access = context.watch<AccessProvider>();
 
-    // Single enforcement point: the book's content is only rendered once
-    // the reader has redeemed a valid access code (see AccessProvider).
-    // The app itself remains free on Google Play; the author sells the
-    // book externally and hands out codes afterwards.
+    // Enforcement point: the first `AccessProvider.freeChapterCount`
+    // chapters are readable by everyone (a genuine free sample, so the app
+    // is a useful free download on Google Play). Chapters beyond that are
+    // only rendered once the reader has redeemed a valid access code.
     if (access.isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
-    if (!access.isUnlocked) {
+    if (!access.canReadChapter(_chapterIndex)) {
       return const AccessGateScreen();
     }
 

@@ -9,6 +9,13 @@ class AccessProvider extends ChangeNotifier {
   static const _kUnlockedKey = 'access_unlocked';
   static const _kRedeemedCodeKey = 'access_redeemed_code';
 
+  /// Number of chapters (counting from the first one) that are freely
+  /// readable without an access code. This lets the app be published on
+  /// Google Play as a genuinely useful free download (a real sample of the
+  /// book, not an empty shell) while the remaining chapters stay reserved
+  /// for readers who purchased the book from the author.
+  static const int freeChapterCount = 3;
+
   bool _isUnlocked = false;
   bool _isLoading = true;
   String? _redeemedCode;
@@ -18,6 +25,13 @@ class AccessProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get redeemedCode => _redeemedCode;
   String? get lastError => _lastError;
+
+  /// Whether [chapterIndex] (0-based) can be read right now: either it is
+  /// one of the free sample chapters, or the reader has unlocked full
+  /// access via a valid code.
+  bool canReadChapter(int chapterIndex) {
+    return _isUnlocked || chapterIndex < freeChapterCount;
+  }
 
   AccessProvider() {
     _load();

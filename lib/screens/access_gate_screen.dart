@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../providers/access_provider.dart';
+import '../providers/book_provider.dart';
 import '../theme/app_theme.dart';
 import 'contact_screen.dart';
 
@@ -80,8 +81,11 @@ class _AccessGateScreenState extends State<AccessGateScreen> {
   @override
   Widget build(BuildContext context) {
     final access = context.watch<AccessProvider>();
+    final bookProvider = context.watch<BookProvider>();
     final colorScheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final totalChapters = bookProvider.book?.chapters.length;
+    final freeCount = AccessProvider.freeChapterCount;
 
     return Scaffold(
       appBar: AppBar(
@@ -141,7 +145,7 @@ class _AccessGateScreenState extends State<AccessGateScreen> {
               ),
               const SizedBox(height: 22),
               Text(
-                'Conteúdo Reservado',
+                'Fim da Amostra Gratuita',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 11,
@@ -152,7 +156,7 @@ class _AccessGateScreenState extends State<AccessGateScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                'Esta leitura pertence a quem já adquiriu o livro',
+                'Continue a leitura desbloqueando o livro completo',
                 textAlign: TextAlign.center,
                 style: AppTheme.readingTextStyle(
                   fontSize: 19,
@@ -162,9 +166,17 @@ class _AccessGateScreenState extends State<AccessGateScreen> {
               ),
               const SizedBox(height: 10),
               Text(
-                'Adquira o Manual de Introdução ao Estudo do Direito directamente '
-                'com o autor e receberá, em poucos minutos, um código pessoal '
-                'para desbloquear a leitura completa neste aparelho.',
+                totalChapters != null
+                    ? 'Já leu gratuitamente os primeiros $freeCount de '
+                          '$totalChapters capítulos. Adquira o Manual de '
+                          'Introdução ao Estudo do Direito directamente com o '
+                          'autor e receberá, em poucos minutos, um código '
+                          'pessoal para desbloquear o restante do livro neste '
+                          'aparelho.'
+                    : 'Adquira o Manual de Introdução ao Estudo do Direito '
+                          'directamente com o autor e receberá, em poucos '
+                          'minutos, um código pessoal para desbloquear o '
+                          'restante do livro neste aparelho.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 13.5,
@@ -217,8 +229,9 @@ class _AccessGateScreenState extends State<AccessGateScreen> {
                       onSubmitted: (_) => _submit(),
                       onChanged: (_) {
                         access.clearError();
-                        if (_justSucceeded)
+                        if (_justSucceeded) {
                           setState(() => _justSucceeded = false);
+                        }
                       },
                       style: const TextStyle(
                         fontWeight: FontWeight.w700,
@@ -334,8 +347,8 @@ class _AccessGateScreenState extends State<AccessGateScreen> {
               _StepTile(
                 number: '3',
                 text:
-                    'Introduza o código acima e comece a ler — de forma '
-                    'permanente, neste aparelho.',
+                    'Introduza o código acima e desbloqueie o livro '
+                    'completo — de forma permanente, neste aparelho.',
               ),
               const SizedBox(height: 22),
 

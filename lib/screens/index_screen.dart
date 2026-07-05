@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/book_provider.dart';
+import '../providers/access_provider.dart';
 import '../theme/app_theme.dart';
 import 'reader_screen.dart';
 
 /// Clickable table of contents: chapters (expandable) -> sections.
+/// Chapters beyond `AccessProvider.freeChapterCount` are shown with a lock
+/// badge to indicate they require an access code.
 class IndexScreen extends StatelessWidget {
   const IndexScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final bookProvider = context.watch<BookProvider>();
+    final access = context.watch<AccessProvider>();
 
     return Scaffold(
       appBar: AppBar(title: const Text('Índice')),
@@ -23,6 +27,7 @@ class IndexScreen extends StatelessWidget {
               itemCount: bookProvider.book!.chapters.length,
               itemBuilder: (context, chapterIndex) {
                 final chapter = bookProvider.book!.chapters[chapterIndex];
+                final isLocked = !access.canReadChapter(chapterIndex);
                 return Theme(
                   data: Theme.of(
                     context,
@@ -62,6 +67,33 @@ class IndexScreen extends StatelessWidget {
                             ),
                           ),
                         ),
+                        if (isLocked)
+                          Icon(
+                            Icons.lock_outline,
+                            size: 16,
+                            color: Theme.of(context).textTheme.bodySmall?.color
+                                ?.withValues(alpha: 0.5),
+                          )
+                        else
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.green.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: const Text(
+                              'GRÁTIS',
+                              style: TextStyle(
+                                fontSize: 9.5,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 0.5,
+                                color: Colors.green,
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                     children: chapter.sections.asMap().entries.map((entry) {
@@ -77,9 +109,20 @@ class IndexScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 13.5,
                             color: Theme.of(context).textTheme.bodyMedium?.color
-                                ?.withValues(alpha: 0.85),
+                                ?.withValues(alpha: isLocked ? 0.5 : 0.85),
                           ),
                         ),
+                        trailing: isLocked
+                            ? Icon(
+                                Icons.lock_outline,
+                                size: 14,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.color
+                                    ?.withValues(alpha: 0.4),
+                              )
+                            : null,
                         onTap: () {
                           Navigator.push(
                             context,
