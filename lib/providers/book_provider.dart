@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import '../models/book_models.dart';
+import '../services/book_decryptor.dart';
 
 enum BookLoadStatus { loading, loaded, error }
 
@@ -20,7 +22,13 @@ class BookProvider extends ChangeNotifier {
 
   Future<void> _loadBook() async {
     try {
-      final raw = await rootBundle.loadString('assets/data/book.json');
+      // The book content ships encrypted (assets/data/book.enc) as an
+      // anti-copy measure: it is decrypted in memory here and never
+      // written back to disk, preventing casual extraction of the
+      // copyrighted text from the installed app package.
+      final ByteData data = await rootBundle.load('assets/data/book.enc');
+      final Uint8List bytes = data.buffer.asUint8List();
+      final raw = BookDecryptor.decryptToJsonString(bytes);
       final Map<String, dynamic> jsonData =
           json.decode(raw) as Map<String, dynamic>;
       _book = Book.fromJson(jsonData);

@@ -44,6 +44,14 @@ dependencies:
   # Elegant typography (serif for reading, sans for UI)
   google_fonts: ^6.2.1
 
+  # External link handling (WhatsApp, phone, email) in Contact screen
+  url_launcher: ^6.3.2
+
+  # Content protection: decrypts the book's data at runtime, preventing
+  # trivial extraction of the copyrighted text from the installed APK/AAB.
+  crypto: ^3.0.6
+  encrypt: ^5.0.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -68,7 +76,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/data/book.json
+    - assets/data/book.enc
     - assets/images/book_cover.png
 
   # An image asset can refer to one or more resolution-specific "variants", see

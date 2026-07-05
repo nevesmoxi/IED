@@ -6,6 +6,7 @@ import '../providers/book_provider.dart';
 import '../theme/app_theme.dart';
 import 'about_author_screen.dart';
 import 'contact_screen.dart';
+import 'privacy_policy_screen.dart';
 import 'reader_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -152,6 +153,18 @@ class ProfileScreen extends StatelessWidget {
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const ContactScreen()),
+                    ),
+                  ),
+                  const Divider(height: 1),
+                  ListTile(
+                    leading: const Icon(Icons.privacy_tip_outlined),
+                    title: const Text('Política de Privacidade'),
+                    trailing: const Icon(Icons.arrow_forward_ios, size: 14),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const PrivacyPolicyScreen(),
+                      ),
                     ),
                   ),
                 ],

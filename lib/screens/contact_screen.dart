@@ -1,8 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../theme/app_theme.dart';
 
 class ContactScreen extends StatelessWidget {
   const ContactScreen({super.key});
+
+  static const String _phone = '+244929990606';
+  static const String _emailPrimary = 'nevesmoxi01@gmail.coom';
+  static const String _emailSecondary = 'nevesmoxi@hotmail.com';
+
+  Future<void> _launch(BuildContext context, Uri uri, String label) async {
+    try {
+      final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (!ok && context.mounted) {
+        _showError(context, label);
+      }
+    } catch (_) {
+      if (context.mounted) _showError(context, label);
+    }
+  }
+
+  void _showError(BuildContext context, String label) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Não foi possível abrir $label neste dispositivo.')),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,32 +54,46 @@ class ContactScreen extends StatelessWidget {
             _ContactTile(
               icon: Icons.chat_bubble_outline,
               label: 'WhatsApp',
-              value: '+244 900 000 000',
+              value: '+244 929 990 606',
               color: const Color(0xFF25D366),
+              onTap: () => _launch(
+                context,
+                Uri.parse('https://wa.me/${_phone.replaceAll('+', '')}'),
+                'o WhatsApp',
+              ),
+            ),
+            _ContactTile(
+              icon: Icons.call_outlined,
+              label: 'Telefone',
+              value: '+244 929 990 606',
+              color: AppColors.charcoalLight,
+              onTap: () => _launch(
+                context,
+                Uri(scheme: 'tel', path: _phone),
+                'o telefone',
+              ),
             ),
             _ContactTile(
               icon: Icons.mail_outline,
               label: 'Email',
-              value: 'contacto@iedreader.ao',
+              value: _emailPrimary,
               color: AppColors.gold,
+              onTap: () => _launch(
+                context,
+                Uri(scheme: 'mailto', path: _emailPrimary),
+                'o email',
+              ),
             ),
             _ContactTile(
-              icon: Icons.camera_alt_outlined,
-              label: 'Instagram',
-              value: '@nevesmoxi',
-              color: const Color(0xFFE1306C),
-            ),
-            _ContactTile(
-              icon: Icons.facebook,
-              label: 'Facebook',
-              value: 'Neves Moxi — Autor',
-              color: const Color(0xFF1877F2),
-            ),
-            _ContactTile(
-              icon: Icons.link,
-              label: 'LinkedIn',
-              value: 'Neves Moxi',
-              color: const Color(0xFF0A66C2),
+              icon: Icons.alternate_email,
+              label: 'Email (alternativo)',
+              value: _emailSecondary,
+              color: AppColors.gold,
+              onTap: () => _launch(
+                context,
+                Uri(scheme: 'mailto', path: _emailSecondary),
+                'o email',
+              ),
             ),
           ],
         ),
@@ -71,12 +107,14 @@ class _ContactTile extends StatelessWidget {
   final String label;
   final String value;
   final Color color;
+  final VoidCallback onTap;
 
   const _ContactTile({
     required this.icon,
     required this.label,
     required this.value,
     required this.color,
+    required this.onTap,
   });
 
   @override
@@ -94,11 +132,7 @@ class _ContactTile extends StatelessWidget {
         ),
         subtitle: Text(value, style: const TextStyle(fontSize: 13)),
         trailing: const Icon(Icons.arrow_forward_ios, size: 14),
-        onTap: () {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('Abrindo $label...')));
-        },
+        onTap: onTap,
       ),
     );
   }
