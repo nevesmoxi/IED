@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IED Reader — Manual do Utilizador</title>
+<style>
+  :root {
+    --gold: #B08D57;
+    --gold-soft: #D9C4A0;
+    --charcoal: #2B2B2B;
+    --charcoal-light: #5A5A5A;
+    --bg: #FAF8F5;
+    --card: #FFFFFF;
+    --border: #E4E0D8;
+    --green: #2E7D32;
+    --whatsapp: #25D366;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--charcoal);
+    line-height: 1.6;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 20px 80px; }
+
+  /* Cover */
+  .cover {
+    text-align: center;
+    padding: 56px 20px 44px;
+  }
+  .cover .book {
+    width: 118px;
+    height: 162px;
+    margin: 0 auto 22px;
+    border-radius: 8px;
+    background: linear-gradient(160deg, var(--charcoal) 0%, #1a1a1a 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 16px 32px rgba(0,0,0,0.18);
+    position: relative;
+  }
+  .cover .book::before {
+    content: "";
+    position: absolute;
+    left: 8px; top: 8px; right: 8px; bottom: 8px;
+    border: 1px solid rgba(217,196,160,0.35);
+    border-radius: 4px;
+  }
+  .cover .book .glyph { font-size: 34px; color: var(--gold-soft); }
+  .cover .eyebrow {
+    font-size: 11px;
+    letter-spacing: 2px;
+    font-weight: 700;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .cover h1 { font-size: 30px; margin: 0 0 8px; font-weight: 800; letter-spacing: -0.3px; }
+  .cover .subtitle { font-size: 15px; color: var(--charcoal-light); max-width: 480px; margin: 0 auto; }
+  .cover .author { margin-top: 18px; font-size: 13.5px; color: var(--gold); font-style: italic; }
+  .cover .manual-tag {
+    display: inline-block;
+    margin-top: 24px;
+    padding: 7px 18px;
+    border-radius: 20px;
+    background: rgba(176,141,87,0.12);
+    color: var(--gold);
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  hr.sep {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0 0 36px;
+  }
+
+  /* TOC */
+  .toc {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 22px 24px;
+    margin-bottom: 40px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .toc h2 { font-size: 13px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--gold); margin: 0 0 14px; font-weight: 700; }
+  .toc ol { margin: 0; padding: 0 0 0 20px; }
+  .toc li { margin-bottom: 8px; font-size: 14px; }
+  .toc a { color: var(--charcoal); text-decoration: none; }
+  .toc a:hover { color: var(--gold); }
+
+  /* Sections */
+  section { margin-bottom: 46px; }
+  .section-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--charcoal);
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+  h2.section-title {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 18px;
+    scroll-margin-top: 20px;
+  }
+  h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 22px 0 10px;
+    color: var(--charcoal);
+  }
+  p { font-size: 14.5px; color: #3d3d3d; margin: 0 0 12px; }
+  ul, ol.steps { padding-left: 0; margin: 0 0 12px; list-style: none; }
+
+  .card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 20px 22px;
+    margin-bottom: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+
+  /* Step tiles (mirrors app's access gate steps) */
+  .step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .step .num {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: rgba(176,141,87,0.15);
+    color: var(--gold);
+    font-size: 12px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .step .text { font-size: 14px; color: #3d3d3d; padding-top: 2px; }
+  .step .text b { color: var(--charcoal); }
+
+  /* Free / locked chapter list */
+  .chapter-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin: 14px 0;
+  }
+  .chapter-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 11px 16px;
+    border-radius: 10px;
+    background: #f9f8f6;
+    border: 1px solid var(--border);
+    font-size: 13.5px;
+  }
+  .chapter-row.free { border-color: rgba(46,125,50,0.3); background: rgba(46,125,50,0.05); }
+  .chapter-row .badge {
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 3px 9px;
+    border-radius: 20px;
+  }
+  .badge.free { background: rgba(46,125,50,0.12); color: var(--green); }
+  .badge.locked { background: rgba(0,0,0,0.06); color: var(--charcoal-light); }
+  .chapter-row .num { color: var(--gold); font-weight: 700; margin-right: 10px; min-width: 22px; display: inline-block; }
+
+  /* callouts */
+  .callout {
+    border-radius: 12px;
+    padding: 16px 18px;
+    font-size: 13.5px;
+    margin: 14px 0;
+    border-left: 3px solid var(--gold);
+    background: rgba(176,141,87,0.07);
+  }
+  .callout.info { border-left-color: #4a90d9; background: rgba(74,144,217,0.07); }
+  .callout.success { border-left-color: var(--green); background: rgba(46,125,50,0.07); }
+  .callout strong { display: block; margin-bottom: 4px; font-size: 12px; letter-spacing: 0.5px; text-transform: uppercase; }
+
+  /* Nav tabs illustration */
+  .tabs-illustration {
+    display: flex;
+    justify-content: space-between;
+    background: var(--card);
+    border-radius: 14px;
+    padding: 14px 8px;
+    margin: 16px 0;
+    border: 1px solid var(--border);
+  }
+  .tab-item {
+    flex: 1;
+    text-align: center;
+    font-size: 10.5px;
+    color: var(--charcoal-light);
+    font-weight: 600;
+  }
+  .tab-item .ic { font-size: 20px; display: block; margin-bottom: 4px; }
+  .tab-item.active { color: var(--gold); }
+
+  /* Code box */
+  .code-example {
+    text-align: center;
+    background: #f4f2ee;
+    border: 1.4px dashed var(--gold-soft);
+    border-radius: 12px;
+    padding: 16px;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+    font-size: 15px;
+    color: var(--charcoal);
+    margin: 14px 0;
+  }
+
+  /* Contact buttons */
+  .contact-list { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+  .contact-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px;
+    background: #f9f8f6;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    font-size: 13.5px;
+  }
+  .contact-item .ic-circle {
+    width: 34px; height: 34px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .contact-item b { display:block; font-size: 13px; }
+  .contact-item span.muted { color: var(--charcoal-light); font-size: 12.5px; }
+
+  /* FAQ */
+  .faq-item { border-bottom: 1px solid var(--border); padding: 16px 0; }
+  .faq-item:last-child { border-bottom: none; }
+  .faq-q { font-size: 14px; font-weight: 700; margin: 0 0 6px; display: flex; gap: 8px; }
+  .faq-q .qmark { color: var(--gold); }
+  .faq-a { font-size: 13.5px; color: #3d3d3d; margin: 0; padding-left: 20px; }
+
+  table.specs { width: 100%; border-collapse: collapse; font-size: 13px; margin: 10px 0; }
+  table.specs td { padding: 8px 4px; border-bottom: 1px solid var(--border); }
+  table.specs td:first-child { color: var(--charcoal-light); width: 40%; }
+  table.specs td:last-child { font-weight: 600; }
+
+  footer {
+    text-align: center;
+    padding: 30px 20px 10px;
+    font-size: 11.5px;
+    color: #999;
+  }
+
+  .top-link {
+    display: inline-block;
+    font-size: 11px;
+    color: var(--gold);
+    text-decoration: none;
+    margin-top: 6px;
+  }
+
+  @media print {
+    body { background: white; }
+    .card, .toc, .chapter-row, .callout, .contact-item { box-shadow: none; }
+    .top-link { display: none; }
+    section { page-break-inside: avoid; }
+  }
+
+  @media (max-width: 480px) {
+    .cover h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- COVER -->
+  <div class="cover">
+    <div class="book"><span class="glyph">⚖</span></div>
+    <div class="eyebrow">IED Reader</div>
+    <h1>Manual do Utilizador</h1>
+    <p class="subtitle">Manual de Introdução ao Estudo do Direito — guia rápido para instalar, ler e desbloquear o livro completo na aplicação.</p>
+    <div class="author">Neves Moxi</div>
+    <div class="manual-tag">Como usar a aplicação</div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- TOC -->
+  <div class="toc">
+    <h2>Índice</h2>
+    <ol>
+      <li><a href="#sobre">O que é o IED Reader</a></li>
+      <li><a href="#instalar">Instalar e abrir a aplicação</a></li>
+      <li><a href="#amostra">Amostra gratuita — capítulos I a III</a></li>
+      <li><a href="#navegacao">Navegar na aplicação</a></li>
+      <li><a href="#personalizar">Personalizar a leitura</a></li>
+      <li><a href="#marcadores">Marcadores e continuar a leitura</a></li>
+      <li><a href="#desbloquear">Como desbloquear o livro completo</a></li>
+      <li><a href="#codigo">Introduzir o código de acesso</a></li>
+      <li><a href="#faq">Perguntas frequentes</a></li>
+      <li><a href="#contactos">Contactos</a></li>
+    </ol>
+  </div>
+
+  <!-- 1. SOBRE -->
+  <section id="sobre">
+    <h2 class="section-title"><span class="section-num">1</span>O que é o IED Reader</h2>
+    <p>
+      O <b>IED Reader</b> é a aplicação oficial de leitura do <i>Manual de Introdução ao
+      Estudo do Direito</i>, da autoria de <b>Neves Moxi</b>. Foi criada para que estudantes
+      de Direito em Angola possam ler o manual directamente no telemóvel, com uma
+      experiência de leitura confortável, pesquisa de conteúdos e marcadores de página.
+    </p>
+    <table class="specs">
+      <tr><td>Autor</td><td>Neves Moxi</td></tr>
+      <tr><td>Capítulos</td><td>17</td></tr>
+      <tr><td>Plataforma</td><td>Android (Google Play)</td></tr>
+      <tr><td>Idioma</td><td>Português</td></tr>
+      <tr><td>Modelo de acesso</td><td>Amostra gratuita + código de desbloqueio</td></tr>
+    </table>
+  </section>
+
+  <!-- 2. INSTALAR -->
+  <section id="instalar">
+    <h2 class="section-title"><span class="section-num">2</span>Instalar e abrir a aplicação</h2>
+    <div class="step">
+      <div class="num">1</div>
+      <div class="text">Abra a <b>Google Play Store</b> no seu telemóvel Android.</div>
+    </div>
+    <div class="step">
+      <div class="num">2</div>
+      <div class="text">Pesquise por <b>"IED Reader"</b> e toque em <b>Instalar</b>.</div>
+    </div>
+    <div class="step">
+      <div class="num">3</div>
+      <div class="text">Depois de instalada, abra a aplicação — não é necessário criar conta nem fazer login.</div>
+    </div>
+    <div class="callout info">
+      <strong>Sem ligação à internet</strong>
+      O texto do livro fica guardado no telemóvel depois de instalado. Pode ler mesmo sem dados
+      móveis ou Wi-Fi.
+    </div>
+  </section>
+
+  <!-- 3. AMOSTRA GRATUITA -->
+  <section id="amostra">
+    <h2 class="section-title"><span class="section-num">3</span>Amostra gratuita — capítulos I a III</h2>
+    <p>
+      A aplicação é <b>gratuita para descarregar</b> e já vem com os <b>três primeiros
+      capítulos completamente livres</b>, para que qualquer leitor possa experimentar a
+      obra antes de decidir comprar o acesso ao livro completo.
+    </p>
+    <div class="chapter-grid">
+      <div class="chapter-row free"><span><span class="num">I</span>Introdução Geral ao Estudo do Direito</span><span class="badge free">GRÁTIS</span></div>
+      <div class="chapter-row free"><span><span class="num">II</span>A Necessidade do Direito</span><span class="badge free">GRÁTIS</span></div>
+      <div class="chapter-row free"><span><span class="num">III</span>O Conceito de Direito</span><span class="badge free">GRÁTIS</span></div>
+      <div class="chapter-row"><span><span class="num">IV</span>O Direito entre as Outras Ordens Normativas</span><span class="badge locked">BLOQUEADO</span></div>
+      <div class="chapter-row"><span><span class="num">…</span>até ao Capítulo XVII</span><span class="badge locked">BLOQUEADO</span></div>
+    </div>
+    <p>
+      Ao terminar o Capítulo III e tentar avançar, a aplicação mostra automaticamente o
+      ecrã <b>"Fim da Amostra Gratuita"</b>, com a opção de comprar o livro ou introduzir
+      um código de acesso (ver secções 7 e 8).
+    </p>
+  </section>
+
+  <!-- 4. NAVEGACAO -->
+  <section id="navegacao">
+    <h2 class="section-title"><span class="section-num">4</span>Navegar na aplicação</h2>
+    <p>A aplicação tem quatro secções principais, acessíveis pela barra inferior:</p>
+    <div class="tabs-illustration">
+      <div class="tab-item active"><span class="ic">🏠</span>Início</div>
+      <div class="tab-item"><span class="ic">📑</span>Índice</div>
+      <div class="tab-item"><span class="ic">🔍</span>Pesquisa</div>
+      <div class="tab-item"><span class="ic">👤</span>Perfil</div>
+    </div>
+    <h3>Início</h3>
+    <p>Mostra a capa do livro e o botão principal <b>"Ler Agora"</b> (ou <b>"Continuar
+      Leitura"</b>, se já tiver lido antes). Tem também acessos rápidos a "Sobre o Autor"
+      e "Contacto".</p>
+    <h3>Índice</h3>
+    <p>Lista todos os 17 capítulos e respectivas secções. Os capítulos livres mostram um
+      selo verde <b>"GRÁTIS"</b>; os restantes mostram um ícone de cadeado 🔒. Toque em
+      qualquer secção para ir directamente para lá.</p>
+    <h3>Pesquisa</h3>
+    <p>Permite procurar palavras ou expressões em todo o livro. Os resultados de
+      capítulos bloqueados aparecem com um ícone de cadeado — ao tocar, é pedido o
+      código de acesso.</p>
+    <h3>Perfil</h3>
+    <p>Mostra o estado do seu acesso ("Amostra gratuita" ou "Acesso completo
+      desbloqueado"), permite alternar o modo escuro da aplicação, consultar os
+      marcadores guardados e introduzir o código de acesso.</p>
+  </section>
+
+  <!-- 5. PERSONALIZAR -->
+  <section id="personalizar">
+    <h2 class="section-title"><span class="section-num">5</span>Personalizar a leitura</h2>
+    <p>
+      Durante a leitura, toque no ícone de <b>engrenagem ⚙️</b> no topo do ecrã para abrir
+      as preferências de leitura:
+    </p>
+    <div class="card">
+      <h3 style="margin-top:0;">Tamanho da letra</h3>
+      <p style="margin-bottom:0;">Use os botões <b>–</b> e <b>+</b> para diminuir ou aumentar o tamanho do
+        texto, adaptando à sua confortabilidade visual.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0;">Modo de leitura</h3>
+      <p style="margin-bottom:0;">Escolha entre três estilos de fundo: <b>Claro</b> (fundo branco), <b>Sépia</b>
+        (tom bege, ideal para leitura prolongada) e <b>Escuro</b> (fundo preto, ideal para
+        ambientes com pouca luz).</p>
+    </div>
+    <p>Toque em qualquer ponto do texto para ocultar/mostrar as barras de navegação e
+      aproveitar a tela toda durante a leitura.</p>
+  </section>
+
+  <!-- 6. MARCADORES -->
+  <section id="marcadores">
+    <h2 class="section-title"><span class="section-num">6</span>Marcadores e continuar a leitura</h2>
+    <p>
+      Toque no ícone de <b>marcador 🔖</b> no topo do ecrã de leitura para guardar a
+      secção actual. Todos os marcadores ficam disponíveis na aba <b>Perfil</b>, e pode
+      tocar em qualquer um deles para voltar directamente àquele ponto do livro.
+    </p>
+    <div class="callout success">
+      <strong>Continuar automaticamente</strong>
+      A aplicação guarda sempre a última posição lida. Ao voltar a abrir o livro, o botão
+      "Continuar Leitura" leva-o exactamente para onde ficou.
+    </div>
+  </section>
+
+  <!-- 7. DESBLOQUEAR -->
+  <section id="desbloquear">
+    <h2 class="section-title"><span class="section-num">7</span>Como desbloquear o livro completo</h2>
+    <p>
+      Depois de ler a amostra gratuita, pode adquirir o acesso completo ao livro
+      (capítulos IV a XVII) directamente com o autor, seguindo três passos simples:
+    </p>
+    <div class="step">
+      <div class="num">1</div>
+      <div class="text"><b>Contacte o autor</b> pelo WhatsApp e combine a forma de pagamento
+        (transferência bancária, Multicaixa Express, etc.).</div>
+    </div>
+    <div class="step">
+      <div class="num">2</div>
+      <div class="text">Após a confirmação do pagamento, o autor <b>envia-lhe um código de
+        acesso pessoal</b>, com o formato <code>IED-XXXXXXX-XXXXXX</code>.</div>
+    </div>
+    <div class="step">
+      <div class="num">3</div>
+      <div class="text"><b>Introduza o código</b> na aplicação (ver secção seguinte) e o
+        livro completo fica desbloqueado <b>permanentemente</b> naquele telemóvel.</div>
+    </div>
+    <div class="callout">
+      <strong>Importante</strong>
+      O código de acesso é pessoal e único. Depois de introduzido com sucesso, o
+      desbloqueio fica guardado no telemóvel — não é necessário introduzi-lo novamente,
+      mesmo depois de fechar a aplicação.
+    </div>
+  </section>
+
+  <!-- 8. CODIGO -->
+  <section id="codigo">
+    <h2 class="section-title"><span class="section-num">8</span>Introduzir o código de acesso</h2>
+    <p>Existem duas formas de chegar ao ecrã de desbloqueio:</p>
+    <ul>
+      <li style="font-size:13.5px; margin-bottom:8px;">🔒 Automaticamente, ao tentar avançar do Capítulo III para o Capítulo IV;</li>
+      <li style="font-size:13.5px; margin-bottom:8px;">👤 Manualmente, na aba <b>Perfil → Desbloquear Livro Completo</b>.</li>
+    </ul>
+    <p>No ecrã de desbloqueio:</p>
+    <div class="step">
+      <div class="num">1</div>
+      <div class="text">Toque no campo de texto e escreva ou <b>cole</b> (ícone de clipe) o
+        código recebido do autor.</div>
+    </div>
+    <div class="code-example">IED&#8209;XXXXXXX&#8209;XXXXXX</div>
+    <div class="step">
+      <div class="num">2</div>
+      <div class="text">Toque em <b>"Desbloquear Leitura"</b>.</div>
+    </div>
+    <div class="step">
+      <div class="num">3</div>
+      <div class="text">Se o código for válido, aparece a confirmação <b>"Acesso
+        Desbloqueado"</b> e pode continuar a leitura a partir do Capítulo IV.</div>
+    </div>
+    <div class="callout info">
+      <strong>Código inválido?</strong>
+      Verifique se copiou o código completo, sem espaços extra. Se o problema persistir,
+      contacte o autor pelos canais na secção 10 — ele poderá confirmar ou reenviar o
+      código.
+    </div>
+  </section>
+
+  <!-- 9. FAQ -->
+  <section id="faq">
+    <h2 class="section-title"><span class="section-num">9</span>Perguntas frequentes</h2>
+
+    <div class="faq-item">
+      <p class="faq-q"><span class="qmark">?</span>Preciso de internet para ler o livro?</p>
+      <p class="faq-a">Não. Depois de instalado, todo o conteúdo já disponível (amostra ou
+        livro completo) fica guardado no telemóvel e pode ser lido offline.</p>
+    </div>
+    <div class="faq-item">
+      <p class="faq-q"><span class="qmark">?</span>O código de acesso funciona em mais de um telemóvel?</p>
+      <p class="faq-a">O desbloqueio é guardado localmente em cada aparelho. Se instalar a
+        aplicação num telemóvel novo, terá de introduzir o código novamente nesse
+        aparelho.</p>
+    </div>
+    <div class="faq-item">
+      <p class="faq-q"><span class="qmark">?</span>Perdi o meu código de acesso, o que faço?</p>
+      <p class="faq-a">Contacte o autor pelo WhatsApp ou email (secção 10) indicando o seu
+        nome e a forma de pagamento utilizada, para que ele possa confirmar a compra e
+        reenviar o código.</p>
+    </div>
+    <div class="faq-item">
+      <p class="faq-q"><span class="qmark">?</span>Posso desinstalar e reinstalar a aplicação sem perder o acesso?</p>
+      <p class="faq-a">Se desinstalar a aplicação, o desbloqueio guardado nesse aparelho é
+        removido. Guarde bem o seu código de acesso — ao reinstalar, basta introduzi-lo
+        novamente para recuperar o acesso completo.</p>
+    </div>
+    <div class="faq-item">
+      <p class="faq-q"><span class="qmark">?</span>Posso tirar print/captura de tela do livro?</p>
+      <p class="faq-a">Por motivos de protecção dos direitos de autor, a aplicação impede
+        capturas de tela e gravação de ecrã durante a leitura.</p>
+    </div>
+    <div class="faq-item">
+      <p class="faq-q"><span class="qmark">?</span>Como posso comprar o livro se ainda não tenho o código?</p>
+      <p class="faq-a">Toque em <b>"Comprar pelo WhatsApp"</b> no ecrã de desbloqueio, ou
+        contacte directamente o autor pelos canais indicados na secção 10.</p>
+    </div>
+  </section>
+
+  <!-- 10. CONTACTOS -->
+  <section id="contactos">
+    <h2 class="section-title"><span class="section-num">10</span>Contactos</h2>
+    <p>Para dúvidas sobre o livro, compra do acesso completo, formações ou parcerias
+      académicas, contacte directamente o autor:</p>
+    <div class="contact-list">
+      <div class="contact-item">
+        <div class="ic-circle" style="background:rgba(37,211,102,0.15);">💬</div>
+        <div><b>WhatsApp</b><span class="muted">+244 929 990 606</span></div>
+      </div>
+      <div class="contact-item">
+        <div class="ic-circle" style="background:rgba(90,90,90,0.12);">📞</div>
+        <div><b>Telefone</b><span class="muted">+244 929 990 606</span></div>
+      </div>
+      <div class="contact-item">
+        <div class="ic-circle" style="background:rgba(176,141,87,0.15);">✉️</div>
+        <div><b>Email</b><span class="muted">nevesmoxi01@gmail.com</span></div>
+      </div>
+      <div class="contact-item">
+        <div class="ic-circle" style="background:rgba(176,141,87,0.15);">✉️</div>
+        <div><b>Email (alternativo)</b><span class="muted">nevesmoxi@hotmail.com</span></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    IED Reader · Manual do Utilizador · Manual de Introdução ao Estudo do Direito<br>
+    © Neves Moxi — Todos os direitos reservados
+    <br><a class="top-link" href="#sobre">↑ Voltar ao topo</a>
+  </footer>
+
+</div>
+</body>
+</html>
