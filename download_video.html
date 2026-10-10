@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Baixar Vídeo — IED</title>
+<style>
+  body {
+    font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    background: #FAF8F5;
+    color: #2B2B2B;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 24px;
+    text-align: center;
+  }
+  h1 { font-size: 28px; margin-bottom: 8px; }
+  p { color: #666; margin-bottom: 28px; }
+  video {
+    max-width: 320px;
+    width: 100%;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    margin-bottom: 28px;
+  }
+  a.btn {
+    background: #B08D57;
+    color: #fff;
+    text-decoration: none;
+    padding: 16px 36px;
+    border-radius: 40px;
+    font-weight: bold;
+    font-size: 18px;
+    box-shadow: 0 4px 14px rgba(176,141,87,0.4);
+  }
+  a.btn:active { transform: scale(0.98); }
+</style>
+</head>
+<body>
+  <h1>IED — Vídeo Tutorial</h1>
+  <p>Toque no botão abaixo para baixar o vídeo para o seu telemóvel/computador.</p>
+  <video src="ied_tutorial_final.mp4" controls playsinline></video>
+  <a class="btn" href="ied_tutorial_final.mp4" download="IED_video_tutorial.mp4">⬇ Baixar Vídeo</a>
+</body>
+</html>

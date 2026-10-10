@@ -1,0 +1,39 @@
+{
+    "name": "Introdução ao Estudo do Direito Angolano",
+    "short_name": "IED Reader",
+    "start_url": ".",
+    "display": "standalone",
+    "display_override": ["window-controls-overlay", "standalone", "browser"],
+    "background_color": "#0B1E3F",
+    "theme_color": "#0B1E3F",
+    "description": "Manual digital de Introdução ao Estudo do Direito Angolano, da autoria de Neves Moxi — fundamentos, conceitos e princípios essenciais do Direito.",
+    "orientation": "portrait-primary",
+    "scope": ".",
+    "lang": "pt-PT",
+    "categories": ["education", "books", "reference"],
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "icons/Icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-maskable-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "icons/Icon-maskable-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ]
+}
