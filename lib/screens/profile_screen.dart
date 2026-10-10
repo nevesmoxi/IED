@@ -49,24 +49,14 @@ class ProfileScreen extends StatelessWidget {
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                           const SizedBox(height: 2),
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.lock_open,
-                                size: 13,
-                                color: Colors.green,
-                              ),
-                              const SizedBox(width: 5),
-                              Text(
-                                'Acesso completo ao livro',
-                                style: TextStyle(
-                                  fontSize: 12.5,
-                                  color: Theme.of(
-                                    context,
-                                  ).textTheme.bodySmall?.color,
-                                ),
-                              ),
-                            ],
+                          Text(
+                            'Acesso: Versão de leitura',
+                            style: TextStyle(
+                              fontSize: 12.5,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.bodySmall?.color,
+                            ),
                           ),
                         ],
                       ),
