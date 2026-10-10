@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../providers/reading_settings_provider.dart';
 import '../providers/reading_progress_provider.dart';
 import '../providers/book_provider.dart';
-import '../providers/access_provider.dart';
 import '../theme/app_theme.dart';
 import 'about_author_screen.dart';
 import 'contact_screen.dart';
@@ -18,7 +17,6 @@ class ProfileScreen extends StatelessWidget {
     final settings = context.watch<ReadingSettingsProvider>();
     final progress = context.watch<ReadingProgressProvider>();
     final bookProvider = context.watch<BookProvider>();
-    final access = context.watch<AccessProvider>();
 
     return Scaffold(
       appBar: AppBar(title: const Text('Perfil')),
@@ -53,20 +51,14 @@ class ProfileScreen extends StatelessWidget {
                           const SizedBox(height: 2),
                           Row(
                             children: [
-                              Icon(
-                                access.isUnlocked
-                                    ? Icons.lock_open
-                                    : Icons.lock_outline,
+                              const Icon(
+                                Icons.lock_open,
                                 size: 13,
-                                color: access.isUnlocked
-                                    ? Colors.green
-                                    : AppColors.gold,
+                                color: Colors.green,
                               ),
                               const SizedBox(width: 5),
                               Text(
-                                access.isUnlocked
-                                    ? 'Acesso completo desbloqueado'
-                                    : 'Amostra gratuita (${AccessProvider.freeChapterCount} capítulos)',
+                                'Acesso completo ao livro',
                                 style: TextStyle(
                                   fontSize: 12.5,
                                   color: Theme.of(
@@ -147,36 +139,6 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
             const SizedBox(height: 20),
-
-            if (!access.isUnlocked) ...[
-              _SectionLabel('Acesso'),
-              Card(
-                child: ListTile(
-                  leading: const Icon(
-                    Icons.lock_outline,
-                    color: AppColors.gold,
-                  ),
-                  title: const Text('Desbloquear Livro Completo'),
-                  subtitle: Text(
-                    'Já leu a amostra gratuita? Introduza o seu código de '
-                    'acesso para continuar a leitura a partir do capítulo '
-                    '${AccessProvider.freeChapterCount + 1}.',
-                    style: const TextStyle(fontSize: 11.5),
-                  ),
-                  trailing: const Icon(Icons.arrow_forward_ios, size: 14),
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const ReaderScreen(
-                        initialChapterIndex: AccessProvider.freeChapterCount,
-                        initialSectionIndex: 0,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-            ],
 
             _SectionLabel('Institucional'),
             Card(

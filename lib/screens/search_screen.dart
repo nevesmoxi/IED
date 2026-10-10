@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/book_provider.dart';
-import '../providers/access_provider.dart';
 import '../models/book_models.dart';
 import '../theme/app_theme.dart';
 import 'reader_screen.dart';
@@ -32,8 +31,6 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final access = context.watch<AccessProvider>();
-
     return Scaffold(
       appBar: AppBar(title: const Text('Pesquisar')),
       body: SafeArea(
@@ -77,23 +74,15 @@ class _SearchScreenState extends State<SearchScreen> {
                       separatorBuilder: (_, __) => const Divider(height: 1),
                       itemBuilder: (context, i) {
                         final r = _results[i];
-                        final isLocked = !access.canReadChapter(r.chapterIndex);
                         return ListTile(
                           contentPadding: const EdgeInsets.symmetric(
                             vertical: 8,
                           ),
                           title: Text(
                             r.sectionHeading,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
-                              color: isLocked
-                                  ? Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.color
-                                        ?.withValues(alpha: 0.5)
-                                  : null,
                             ),
                           ),
                           subtitle: Padding(
@@ -108,22 +97,10 @@ class _SearchScreenState extends State<SearchScreen> {
                               ),
                             ),
                           ),
-                          leading: Icon(
-                            isLocked
-                                ? Icons.lock_outline
-                                : Icons.description_outlined,
-                            color: isLocked
-                                ? Theme.of(context).textTheme.bodySmall?.color
-                                      ?.withValues(alpha: 0.5)
-                                : AppColors.gold,
+                          leading: const Icon(
+                            Icons.description_outlined,
+                            color: AppColors.gold,
                           ),
-                          trailing: isLocked
-                              ? const Icon(
-                                  Icons.arrow_forward_ios,
-                                  size: 12,
-                                  color: AppColors.gold,
-                                )
-                              : null,
                           onTap: () {
                             Navigator.push(
                               context,

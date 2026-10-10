@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/book_provider.dart';
 import '../providers/reading_progress_provider.dart';
-import '../providers/access_provider.dart';
 import '../theme/app_theme.dart';
 import 'reader_screen.dart';
 import 'about_author_screen.dart';
@@ -17,7 +16,6 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final bookProvider = context.watch<BookProvider>();
     final progress = context.watch<ReadingProgressProvider>();
-    final access = context.watch<AccessProvider>();
 
     if (bookProvider.status == BookLoadStatus.loading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
@@ -33,11 +31,6 @@ class HomeScreen extends StatelessWidget {
 
     final book = bookProvider.book!;
     final hasProgress = progress.lastPosition != null;
-    // Whether resuming would land on a chapter that's still locked (e.g.
-    // the reader finished the free sample without unlocking access yet).
-    final resumeIsLocked =
-        hasProgress &&
-        !access.canReadChapter(progress.lastPosition!.chapterIndex);
 
     return Scaffold(
       body: SafeArea(
@@ -114,19 +107,9 @@ class HomeScreen extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   icon: Icon(
-                    resumeIsLocked
-                        ? Icons.lock_outline
-                        : hasProgress
-                        ? Icons.menu_book
-                        : Icons.play_arrow_rounded,
+                    hasProgress ? Icons.menu_book : Icons.play_arrow_rounded,
                   ),
-                  label: Text(
-                    resumeIsLocked
-                        ? 'Desbloquear Leitura'
-                        : hasProgress
-                        ? 'Continuar Leitura'
-                        : 'Ler Agora',
-                  ),
+                  label: Text(hasProgress ? 'Continuar Leitura' : 'Ler Agora'),
                   onPressed: () {
                     final chapterIdx = hasProgress
                         ? progress.lastPosition!.chapterIndex

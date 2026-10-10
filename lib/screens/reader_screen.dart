@@ -3,10 +3,8 @@ import 'package:provider/provider.dart';
 import '../providers/book_provider.dart';
 import '../providers/reading_settings_provider.dart';
 import '../providers/reading_progress_provider.dart';
-import '../providers/access_provider.dart';
 import '../models/book_models.dart';
 import '../theme/app_theme.dart';
-import 'access_gate_screen.dart';
 
 /// The core reading experience: renders one section's content blocks with
 /// serif typography, supports font-size adjustment, light/dark/sepia modes,
@@ -106,18 +104,6 @@ class _ReaderScreenState extends State<ReaderScreen> {
     final bookProvider = context.watch<BookProvider>();
     final settings = context.watch<ReadingSettingsProvider>();
     final progress = context.watch<ReadingProgressProvider>();
-    final access = context.watch<AccessProvider>();
-
-    // Enforcement point: the first `AccessProvider.freeChapterCount`
-    // chapters are readable by everyone (a genuine free sample, so the app
-    // is a useful free download on Google Play). Chapters beyond that are
-    // only rendered once the reader has redeemed a valid access code.
-    if (access.isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
-    if (!access.canReadChapter(_chapterIndex)) {
-      return const AccessGateScreen();
-    }
 
     if (bookProvider.book == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
