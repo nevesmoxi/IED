@@ -56,8 +56,15 @@ class HomeScreen extends StatelessWidget {
                 ),
                 clipBehavior: Clip.antiAlias,
                 child: Image.asset(
-                  'assets/images/book_cover.png',
+                  'assets/images/book_cover.webp',
                   fit: BoxFit.cover,
+                  // Fallback to the PNG master asset if, for any reason,
+                  // the WebP (used primarily for faster web loading) fails
+                  // to decode on a given platform/browser.
+                  errorBuilder: (context, error, stackTrace) => Image.asset(
+                    'assets/images/book_cover.png',
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
               const SizedBox(height: 28),

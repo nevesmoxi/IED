@@ -1,5 +1,5 @@
 name: ied_reader
-description: "A new Flutter project."
+description: "Introdução ao Estudo do Direito Angolano — manual digital de Neves Moxi."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -78,6 +78,7 @@ flutter:
   assets:
     - assets/data/book.enc
     - assets/images/book_cover.png
+    - assets/images/book_cover.webp
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

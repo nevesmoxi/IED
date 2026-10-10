@@ -45,3 +45,11 @@ app.*.map.json
 /android/app/release
 android/release-key.jks
 android/key.properties
+
+# Firebase CLI local artifacts (never contain secrets by themselves, but are
+# machine-specific and should not be versioned)
+firebase-debug.log
+.firebase/
+# Firebase Admin SDK service-account keys must NEVER be committed
+*firebase-adminsdk*.json
+*serviceAccountKey*.json
