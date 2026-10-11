@@ -6,36 +6,62 @@ cifrado em repouso (AES-256-CBC) e disponibilizado por via de leitura online.
 
 ## 🌐 Publicação Web (PWA)
 
-O aplicativo é publicado automaticamente como Progressive Web App sempre que
-há um `push` para o branch `main`, através de dois workflows independentes
-em `.github/workflows/`:
+A aplicação está preparada para publicação em dois destinos de alojamento
+estático, correspondentes às duas secções abaixo.
 
-### GitHub Pages (activo por omissão)
-`deploy-pages.yml` compila o projecto Flutter para Web e publica no GitHub
-Pages do repositório. Não requer qualquer configuração adicional — corre
-automaticamente a cada push para `main`.
+### GitHub Pages (pronto — falta uma activação manual única)
+Já existe no repositório remoto um branch `gh-pages` com a build de produção
+compilada (`--base-href /IED/`). Falta apenas um passo manual, de
+realização única, por parte de um administrador do repositório:
 
-**Link público**: `https://nevesmoxi.github.io/IED/`
+1. Aceder a `Settings → Pages` em https://github.com/nevesmoxi/IED/settings/pages
+2. Em "Build and deployment" → "Source", seleccionar **Deploy from a branch**
+3. Em "Branch", seleccionar `gh-pages` e a pasta `/ (root)` → **Save**
+
+Após este passo, o GitHub publica automaticamente o conteúdo do branch
+`gh-pages` em: `https://nevesmoxi.github.io/IED/`
+
+**Actualizações futuras**: cada vez que o conteúdo do livro ou da aplicação
+for alterado, é necessário reconstruir e republicar o branch `gh-pages`
+manualmente (via `flutter build web --release --base-href "/IED/"` seguido
+de push desse resultado para o branch `gh-pages`), uma vez que a automação
+total por GitHub Actions (ficheiros `.github/workflows/*.yml`) não pôde ser
+adicionada a este repositório a partir deste ambiente — ver nota técnica
+abaixo.
+
+> **Nota técnica — automação por GitHub Actions**: foram preparados dois
+> workflows completos (`deploy-pages.yml` e `deploy-firebase.yml`) que
+> automatizariam a publicação a cada `push` para `main`. O GitHub recusou
+> a sua criação a partir deste ambiente por restrição de permissões do
+> GitHub App instalado (falta do escopo `workflows`, independente de outras
+> permissões administrativas já concedidas). Esta restrição só pode ser
+> ultrapassada por um utilizador humano autenticado directamente no GitHub
+> (não pelo token do ambiente). Os ficheiros YAML completos encontram-se
+> disponíveis para serem colados manualmente em
+> `Actions → set up a workflow yourself`, caso se deseje activar esta
+> automação — consultar o histórico de desenvolvimento ou solicitar o
+> conteúdo exacto dos dois ficheiros.
 
 ### Firebase Hosting (opcional, requer configuração única)
-`deploy-firebase.yml` publica a mesma build no Firebase Hosting. Fica
-inactivo até serem configurados os seguintes segredos/variáveis no
-repositório (`Settings → Secrets and variables → Actions`):
+A configuração (`firebase.json`) e o script de publicação
+(`scripts/deploy_firebase.sh`) já estão prontos no repositório. Requer que
+um utilizador com acesso execute, numa máquina local ou neste ambiente:
 
 1. Criar um projecto gratuito em https://console.firebase.google.com
-2. Gerar uma conta de serviço: `Definições do projecto → Contas de serviço
-   → Gerar nova chave privada` (ficheiro JSON)
-3. No GitHub: `Settings → Secrets and variables → Actions`
-   - **Secret** `FIREBASE_SERVICE_ACCOUNT`: colar o conteúdo integral do JSON
-   - **Variable** `FIREBASE_PROJECT_ID`: o ID do projecto Firebase
-4. No separador "Actions" do repositório, executar manualmente o workflow
-   "Publicar IED Reader (Firebase Hosting)" uma primeira vez
-   (`workflow_dispatch`), ou simplesmente aguardar o próximo push a `main`
+2. Autenticar: `firebase login`
+3. Publicar:
+   ```bash
+   FIREBASE_PROJECT_ID=<id-do-projecto> ./scripts/deploy_firebase.sh
+   ```
 
 A partir daí, o link definitivo será `https://<project-id>.web.app`.
 
-Alternativamente, pode publicar manualmente a partir de uma máquina local
-autenticada com `firebase login`, usando o script `scripts/deploy_firebase.sh`.
+Caso se deseje automatizar também este destino via GitHub Actions, o
+workflow `deploy-firebase.yml` já está escrito e validado, mas sujeito à
+mesma restrição de permissões descrita acima — requer colagem manual via
+GitHub web UI e configuração de `FIREBASE_SERVICE_ACCOUNT` (secret) e
+`FIREBASE_PROJECT_ID` (variable) em `Settings → Secrets and variables →
+Actions`.
 
 ## 📲 Instalar como aplicativo (PWA)
 
